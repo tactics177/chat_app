@@ -1,26 +1,25 @@
 package com.chat.consumerservice.service;
 
-import com.chat.consumerservice.domain.User;
+import com.chat.consumerservice.domain.Message;
+import com.chat.consumerservice.repository.MessageRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
-import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
-import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Component
-public class RabbitMqReceiver implements RabbitListenerConfigurer {
+import java.util.Date;
 
-    private static final Logger logger = LoggerFactory.getLogger(RabbitMqReceiver.class);
+@Service
+public class RabbitMqReceiver {
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @RabbitListener(queues = "${spring.rabbitmq.queue}")
-    public void receivedMessage(User user) {
-
-        logger.info("User Details Received is.. " + user);
-    }
-
-    @Override
-    public void configureRabbitListeners(RabbitListenerEndpointRegistrar rabbitListenerEndpointRegistrar) {
-
+    public void receivedMessage(Message message) {
+        if (message.getTimestamp() == null) {
+            message.setTimestamp(new Date()); // Set the timestamp if not already set
+        }
+        messageRepository.save(message);
+        System.out.println("Received and saved message: " + message);
     }
 }
