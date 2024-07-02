@@ -9,14 +9,15 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      onSendMessage(message);
+    const trimmedMessage = message.trim();
+    if (trimmedMessage) {
+      onSendMessage(trimmedMessage);
       setMessage('');
     }
   };
 
   return (
-    <div className="container mt-4">
+    <div className="mt-4">
       <form onSubmit={handleSubmit} className="input-group">
         <input
           type="text"

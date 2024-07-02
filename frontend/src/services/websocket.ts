@@ -9,13 +9,16 @@ let isSubscribed = false; // Flag to ensure single subscription
 export const connect = (onMessageReceived: (message: any) => void) => {
   if (!stompClient) {
     stompClient = new Client({
-      webSocketFactory: () => new SockJS(SOCKET_URL),
+      webSocketFactory: () => new SockJS(`${SOCKET_URL}`),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('Connected to WebSocket');
         if (!isSubscribed) {
           stompClient?.subscribe('/topic/messages', (message) => {
-            onMessageReceived(JSON.parse(message.body));
+            const receivedMessage = JSON.parse(message.body);
+            if (receivedMessage && receivedMessage.id && receivedMessage.content && receivedMessage.timestamp) {
+              onMessageReceived(receivedMessage);
+            }
           });
           isSubscribed = true; // Set the flag to true after subscribing
         }

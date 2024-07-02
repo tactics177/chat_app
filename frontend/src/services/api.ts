@@ -27,9 +27,23 @@ export const getUserByUsername = async (username: string, token: string) => {
   }
 };
 
-export const getMessages = async (userId: string, token: string): Promise<Message[]> => {
+export const getAllUsers = async (token: string) => {
   try {
-    const response = await axios.get(`${API_URL_CONSUMER}/messages/${userId}`, {
+    const response = await axios.get(`${API_URL_CONSUMER}/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching users', error);
+    throw error;
+  }
+};
+
+export const getMessages = async (senderId: string, receiverId: string, token: string): Promise<Message[]> => {
+  try {
+    const response = await axios.get(`${API_URL_CONSUMER}/messages/${senderId}/${receiverId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

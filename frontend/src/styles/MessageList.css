@@ -1,0 +1,25 @@
+.message-item {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.5rem 0;
+  }
+  
+  .user-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+  }
+  
+  .sender-username {
+    color: #007bff; /* Blue color for the sender */
+  }
+  
+  .receiver-username {
+    color: #28a745; /* Green color for the receiver */
+  }
+  
+  .card-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  

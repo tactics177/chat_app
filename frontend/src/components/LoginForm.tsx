@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { login } from '../services/api';
 
 interface LoginFormProps {
-  onLogin: (token: string, username: string) => void;
+  onLogin: (token: string, username: string, userId: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
@@ -14,12 +14,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     e.preventDefault();
     try {
       const response = await login(username, password);
-      if (response.token) {
-        localStorage.setItem('jwtToken', response.token); // Store token in localStorage
-        localStorage.setItem('username', response.username); // Store username in localStorage
-        onLogin(response.token, response.username);
+      if (response.token && response.username && response.userId) {
+        localStorage.setItem('jwtToken', response.token);
+        localStorage.setItem('username', response.username);
+        localStorage.setItem('userId', response.userId); // Store userId in localStorage
+        onLogin(response.token, response.username, response.userId);
       } else {
-        setError('Invalid username or password');
+        throw new Error('Invalid login response');
       }
     } catch (err) {
       setError('Invalid username or password');
