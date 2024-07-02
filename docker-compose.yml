@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  consumer-service:
+    build:
+      context: ./backend/consumer-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - rabbitmq
+
+  producer-service:
+    build:
+      context: ./backend/producer-service
+      dockerfile: Dockerfile
+    ports:
+      - "9091:9091"
+    networks:
+      - app-network
+    depends_on:
+      - rabbitmq
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

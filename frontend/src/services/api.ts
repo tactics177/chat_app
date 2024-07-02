@@ -13,6 +13,15 @@ export const login = async (username: string, password: string) => {
   }
 };
 
+export const signup = async (username: string, email: string, password: string) => {
+  try {
+    const response = await axios.post(`${API_URL_CONSUMER}/users`, { username, email, password });
+    return response.data;
+  } catch (error) {
+    throw new Error('Username or Email already exists');
+  }
+};
+
 export const getUserByUsername = async (username: string, token: string) => {
   try {
     const response = await axios.get(`${API_URL_CONSUMER}/users/${username}`, {

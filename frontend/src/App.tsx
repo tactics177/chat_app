@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
 import UserSidebar from './components/UserSidebar';
@@ -6,9 +7,10 @@ import { getMessages, getUserByUsername, sendMessage } from './services/api';
 import { connect, disconnect } from './services/websocket';
 import { Message } from './types/message';
 import LoginForm from './components/LoginForm';
+import Signup from './components/Signup';
 import './App.css'; // Import custom CSS for additional styling
 
-const App: React.FC = () => {
+const ChatApp: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [token, setToken] = useState<string | null>(localStorage.getItem('jwtToken'));
   const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
@@ -143,6 +145,18 @@ const App: React.FC = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginForm onLogin={() => {}} />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<ChatApp />} />
+      </Routes>
+    </Router>
   );
 };
 

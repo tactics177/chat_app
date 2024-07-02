@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../services/api';
 
 interface LoginFormProps {
@@ -9,6 +10,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,8 +19,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
       if (response.token && response.username && response.userId) {
         localStorage.setItem('jwtToken', response.token);
         localStorage.setItem('username', response.username);
-        localStorage.setItem('userId', response.userId); // Store userId in localStorage
+        localStorage.setItem('userId', response.userId);
         onLogin(response.token, response.username, response.userId);
+        navigate('/'); // Redirect to chat page
       } else {
         throw new Error('Invalid login response');
       }
@@ -51,6 +54,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
           />
         </div>
         <button type="submit" className="btn btn-primary">Login</button>
+        <p className="mt-2">
+          Don't have an account? <a href="/signup">Sign up</a>
+        </p>
       </form>
     </div>
   );
