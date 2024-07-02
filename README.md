@@ -27,7 +27,7 @@ git clone https://github.com/tactics177/chat_app.git
 
 ### 2. Enter the directory
 ```bash
-cd chat-app
+cd chat_app
 ```
 
 ### 3. run docker compose
