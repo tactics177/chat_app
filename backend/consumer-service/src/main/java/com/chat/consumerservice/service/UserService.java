@@ -17,9 +17,17 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User saveUser(User user) {
+    public Optional<User> saveUser(User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return Optional.empty(); // Username already exists
+        }
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return Optional.empty(); // Email already exists
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return Optional.of(userRepository.save(user));
     }
 
     public Optional<User> findByUsername(String username) {
