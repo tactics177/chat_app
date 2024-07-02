@@ -28,6 +28,10 @@ A full-stack chat application built using Spring Boot, Spring Security, React, R
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/tactics177/chat_app.git
+
+```bash
 cd chat-app
+
+```bash
 docker-compose up --build
 
