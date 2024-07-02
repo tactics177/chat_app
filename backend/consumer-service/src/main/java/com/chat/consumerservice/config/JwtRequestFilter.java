@@ -14,9 +14,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 
+/**
+ * Configures CORS mapping for the application.
+ *
+ * @return A {@link WebMvcConfigurer} with CORS configuration applied.
+ */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -26,6 +32,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    /**
+     * Filters each request to check for a valid JWT token.
+     * Extracts the token from the Authorization header, validates it, and sets the user details in the security context.
+     *
+     * @param request  Incoming request
+     * @param response Outgoing response
+     * @param chain    Filter chain
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
