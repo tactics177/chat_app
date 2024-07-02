@@ -2,6 +2,13 @@
 
 A full-stack chat application built using Spring Boot, Spring Security, React, RabbitMQ, Websockets, and MongoDB.
 
+# groupe 17
+
+- Gregoire Lequippe
+- Ali Loudagh
+- Nahel Kini
+- Roman Sabechkine
+
 ## Table of Contents
 - [Features](#features)
 - [Requirements](#requirements)
@@ -33,5 +40,10 @@ cd chat_app
 ### 3. run docker compose
 ```bash
 docker-compose up --build
+```
+
+### 4. when successful, the app should be accessible at:
+```bash
+http://localhost:3000/
 ```
 
