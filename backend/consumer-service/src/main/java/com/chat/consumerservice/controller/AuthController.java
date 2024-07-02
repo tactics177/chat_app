@@ -1,5 +1,7 @@
 package com.chat.consumerservice.controller;
 
+import com.chat.consumerservice.domain.User;
+import com.chat.consumerservice.service.UserService;
 import com.chat.consumerservice.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,9 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private UserService userService; // Assuming you have a UserService to fetch user details
+
     @PostMapping("/api/login")
     public Map<String, String> login(@RequestBody Map<String, String> body) {
         String username = body.get("username");
@@ -37,9 +42,13 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
+            // Fetch user ID based on the username
+            User user = userService.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
             Map<String, String> response = new HashMap<>();
             response.put("status", "success");
             response.put("username", userDetails.getUsername());
+            response.put("userId", user.getId()); // Include user ID in the response
             response.put("token", jwt);
             return response;
         } catch (AuthenticationException e) {

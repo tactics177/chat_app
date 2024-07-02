@@ -8,6 +8,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,16 +27,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/login", "/users/**").permitAll()
+                        .requestMatchers("/api/login", "/users/**", "/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin((form) -> form
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
+                .formLogin(AbstractHttpConfigurer::disable
                 )
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(LogoutConfigurer::permitAll)
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/users/**", "/api/login")
+                        .ignoringRequestMatchers("/users/**", "/api/login", "/ws/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 );
 

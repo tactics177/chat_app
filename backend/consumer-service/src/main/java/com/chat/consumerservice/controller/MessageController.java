@@ -26,4 +26,10 @@ public class MessageController {
         List<Message> messages = messageService.getMessages(userId);
         return ResponseEntity.ok(messages);
     }
+
+    @GetMapping("/{senderId}/{receiverId}")
+    public ResponseEntity<List<Message>> getMessagesBySenderAndReceiver(@PathVariable String senderId, @PathVariable String receiverId) {
+        List<Message> messages = messageService.getConversationMessages(senderId, receiverId);
+        return ResponseEntity.ok(messages);
+    }
 }

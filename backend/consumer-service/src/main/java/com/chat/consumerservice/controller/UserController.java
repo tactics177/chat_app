@@ -32,4 +32,17 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/id/{userId}")
+    public ResponseEntity<User> getUserByUserId(@PathVariable String userId) {
+        return userService.findByUserId(userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // get all users
+    @GetMapping
+    public ResponseEntity<Iterable<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 }
