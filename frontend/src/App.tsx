@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
-import { getMessages, sendMessage } from './services/api';
+import { getMessages, getUserByUsername, sendMessage } from './services/api';
 import { connect, disconnect } from './services/websocket';
 import { Message } from './types/message';
+import LoginForm from './components/LoginForm';
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const userId = '668174f7ca0ef80067939406'; // Replace with actual user ID
+  const [token, setToken] = useState<string | null>(localStorage.getItem('jwtToken'));
+  const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Function to add a new message, ensuring no duplicates
   const addMessage = (newMessage: Message) => {
@@ -21,44 +24,64 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    // Fetch initial messages
-    const fetchMessages = async () => {
-      try {
-        const fetchedMessages = await getMessages(userId);
-        console.log('Fetched messages:', fetchedMessages);
-        setMessages(fetchedMessages);
-      } catch (error) {
-        console.error('Error fetching messages', error);
-      }
-    };
+    if (token && username) {
+      // Fetch user data to get the userId
+      const fetchUserData = async () => {
+        try {
+          const user = await getUserByUsername(username, token);
+          setUserId(user.id);
+        } catch (error) {
+          console.error('Error fetching user data', error);
+        }
+      };
 
-    fetchMessages();
+      fetchUserData();
+    }
+  }, [token, username]);
 
-    // Connect to WebSocket
-    connect((message: Message) => {
-      console.log('Received WebSocket message:', message);
-      addMessage(message);
-    });
+  useEffect(() => {
+    if (token && userId) {
+      // Fetch initial messages
+      const fetchMessages = async () => {
+        try {
+          const fetchedMessages = await getMessages(userId, token);
+          console.log('Fetched messages:', fetchedMessages);
+          setMessages(fetchedMessages);
+        } catch (error) {
+          console.error('Error fetching messages', error);
+        }
+      };
 
-    // Cleanup on component unmount
-    return () => {
-      disconnect();
-    };
-  }, [userId]);
+      fetchMessages();
+
+      // Connect to WebSocket
+      connect(
+        (message: Message) => {
+          console.log('Received WebSocket message:', message);
+          addMessage(message);
+        },
+      );
+
+      // Cleanup on component unmount
+      return () => {
+        disconnect();
+      };
+    }
+  }, [token, userId]);
 
   const handleSendMessage = async (content: string) => {
-    if (!content.trim()) {
-      return; // Avoid sending empty messages
+    if (!content.trim() || !token) {
+      return; // Avoid sending empty messages or if not logged in
     }
 
     const message: Message = {
-      senderId: userId,
+      senderId: userId!,
       receiverId: '66817617ca0ef80067939408', // Replace with actual receiver ID
       content: content.trim(), // Trim content to remove extra spaces
     };
 
     try {
-      const sentMessage = await sendMessage(message); // Use the HTTP client to send the message
+      const sentMessage = await sendMessage(message, token); // Use the HTTP client to send the message
       console.log('Sent message:', sentMessage);
       addMessage(sentMessage);
     } catch (error) {
@@ -66,11 +89,29 @@ const App: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
+    setToken(null);
+    setUsername(null);
+    setUserId(null);
+  };
+
   return (
     <div>
       <h1>Chat App</h1>
-      <MessageList messages={messages} />
-      <MessageInput onSendMessage={handleSendMessage} />
+      {!token ? (
+        <LoginForm onLogin={(token, username) => {
+          setToken(token);
+          setUsername(username);
+        }} />
+      ) : (
+        <>
+          <button onClick={handleLogout} className="btn btn-secondary">Logout</button>
+          <MessageList messages={messages} token={token} />
+          <MessageInput onSendMessage={handleSendMessage} />
+        </>
+      )}
     </div>
   );
 };
