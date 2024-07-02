@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Date;
 
+/**
+ * This class is responsible for sending messages to RabbitMQ.
+ */
 @Service
 public class RabbitMqSender {
 
