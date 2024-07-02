@@ -1,16 +1,11 @@
 # Chat App
 
-A full-stack chat application built using Spring Boot, Spring Security, React, RabbitMQ, Websockets, and MongoDB Atlas.
+A full-stack chat application built using Spring Boot, Spring Security, React, RabbitMQ, Websockets, and MongoDB.
 
 ## Table of Contents
 - [Features](#features)
 - [Requirements](#requirements)
 - [Setup Instructions](#setup-instructions)
-- [Running the Application](#running-the-application)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 - User authentication with JWT
@@ -30,10 +25,12 @@ A full-stack chat application built using Spring Boot, Spring Security, React, R
 git clone https://github.com/tactics177/chat_app.git
 ```
 
+### 2. Enter the directory
 ```bash
 cd chat-app
 ```
 
+### 3. run docker compose
 ```bash
 docker-compose up --build
 ```
